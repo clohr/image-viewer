@@ -1,0 +1,13 @@
+{
+  "name": "image-viewer",
+  "version": "1.0.0",
+  "description": "Elm image viewer with pan and zoom",
+  "scripts": {
+    "start": "./node_modules/.bin/elm-live src/Main.elm --output=dist/elm.js --open"
+  },
+  "author": "Christian Lohr <christian.lohr@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "elm-live": "^2.7.5"
+  }
+}
