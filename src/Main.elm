@@ -5,11 +5,15 @@ import Html.Attributes exposing (class, src, height, width, alt)
 
 
 -- import Html.Events exposing (on)
--- import Json.Decode as Decode
 -- import Mouse exposing (Position)
 
+import Json.Decode as Decode exposing (int, string, Decoder)
+import Json.Decode.Pipeline exposing (decode, optional)
 
-main : Program Flags Model Msg
+
+{-| Because Flags can be optional, we want to update the signature to use Decode.Value vs. Flags so it can be decoded
+-}
+main : Program Decode.Value Model Msg
 main =
     Html.programWithFlags
         { init = init
@@ -39,45 +43,32 @@ type alias Flags =
     Model
 
 
-defaultTo : a -> Maybe a -> a
-defaultTo defaultValue valueToTest =
-    case valueToTest of
-        Just val ->
-            val
+flagDecoder : Decoder Model
+flagDecoder =
+    decode Model
+        |> optional "imgSrc" string ""
+        |> optional "imgWidth" int 1920
+        |> optional "imgHeight" int 1200
+        |> optional "imgAlt" string ""
+        |> optional "viewerWidth" int 640
+        |> optional "viewerHeight" int 400
+        |> optional "zoomInc" int 10
+        |> optional "maxZoom" int 3
 
-        Nothing ->
-            defaultValue
 
-
-init : Flags -> ( Model, Cmd Msg )
+init : Decode.Value -> ( Model, Cmd Msg )
 init flags =
     let
-        imgUrl =
-            defaultTo "" (Just flags.imgSrc)
-
-        imgWidth =
-            defaultTo 1920 (Just flags.imgWidth)
-
-        imgHeight =
-            defaultTo 1200 (Just flags.imgHeight)
-
-        imgAlt =
-            defaultTo "" (Just flags.imgAlt)
-
-        viewerWidth =
-            defaultTo 640 (Just flags.viewerWidth)
-
-        viewerHeight =
-            defaultTo 400 (Just flags.viewerHeight)
-
-        zoomIncr =
-            defaultTo 10 (Just flags.zoomIncr)
-
-        maxZoom =
-            defaultTo 3 (Just flags.maxZoom)
+        decodedValue =
+            Decode.decodeValue flagDecoder flags
 
         initialModel =
-            Model imgUrl imgWidth imgHeight imgAlt viewerWidth viewerHeight zoomIncr maxZoom
+            case decodedValue of
+                Ok model ->
+                    model
+
+                Err _ ->
+                    Model "" 1920 1200 "" 640 400 10 3
     in
         ( initialModel, Cmd.none )
 
@@ -95,6 +86,10 @@ update msg model =
     case msg of
         NoOp ->
             ( model, Cmd.none )
+
+
+
+-- VIEW
 
 
 view : Model -> Html Msg
