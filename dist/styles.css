@@ -1,0 +1,28 @@
+.photo-wrapper {
+    box-sizing: border-box;
+    height: 400px;
+    overflow: hidden;
+    position: relative;
+    width: 640px;
+}
+
+.photo-wrapper:hover {
+    cursor: zoom-in;
+}
+
+.photo {
+    background-image: url(/dist/northern-lights.jpg);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 100%;
+    left: 0;
+    position: absolute;
+    top: 0;
+    transition: transform .3s ease-in-out;
+    width: 100%;
+}
+
+.photo-wrapper:hover .photo {
+    transform: scale(3.0)
+}

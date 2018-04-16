@@ -1,11 +1,10 @@
 module Main exposing (..)
 
-import Html exposing (Html, div, img)
-import Html.Attributes exposing (class, src, height, width, alt)
+import Html exposing (Html, div)
+import Html.Attributes exposing (class)
 
 
 -- import Html.Events exposing (on)
--- import Mouse exposing (Position)
 
 import Json.Decode as Decode exposing (int, string, Decoder)
 import Json.Decode.Pipeline exposing (decode, optional)
@@ -90,12 +89,8 @@ update msg model =
 
 view : Model -> Html Msg
 view model =
-    div [ class "wrapper" ]
-        [ img
-            [ src model.imgSrc
-            , height model.imgHeight
-            , width model.imgWidth
-            , alt model.imgAlt
-            ]
+    div [ class "photo-wrapper" ]
+        [ div
+            [ class "photo" ]
             []
         ]
