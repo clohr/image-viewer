@@ -2,12 +2,9 @@ module Main exposing (..)
 
 import Html exposing (Html, div)
 import Html.Attributes exposing (class)
-
-
--- import Html.Events exposing (on)
-
 import Json.Decode as Decode exposing (int, string, Decoder)
 import Json.Decode.Pipeline exposing (decode, optional)
+import MouseEvents exposing (onMouseMove, relPos, MouseEvent, Position)
 
 
 {-| Because Flags can be optional, we want to update the signature to use Decode.Value vs. Flags so it can be decoded
@@ -18,7 +15,7 @@ main =
         { init = init
         , view = view
         , update = update
-        , subscriptions = (\_ -> Sub.none)
+        , subscriptions = subscriptions
         }
 
 
@@ -27,6 +24,16 @@ main =
 
 
 type alias Model =
+    { photo : Photo
+    , lastPos : MouseEvent
+    }
+
+
+type alias Flags =
+    Photo
+
+
+type alias Photo =
     { imgSrc : String
     , imgWidth : Int
     , imgHeight : Int
@@ -36,13 +43,9 @@ type alias Model =
     }
 
 
-type alias Flags =
-    Model
-
-
-flagDecoder : Decoder Model
+flagDecoder : Decoder Photo
 flagDecoder =
-    decode Model
+    decode Photo
         |> optional "imgSrc" string ""
         |> optional "imgWidth" int 1920
         |> optional "imgHeight" int 1200
@@ -57,13 +60,16 @@ init flags =
         decodedValue =
             Decode.decodeValue flagDecoder flags
 
+        lastPos =
+            { clientPos = Position 0 0, targetPos = Position 0 0 }
+
         initialModel =
             case decodedValue of
                 Ok model ->
-                    model
+                    { photo = model, lastPos = lastPos }
 
                 Err _ ->
-                    Model "" 1920 1200 "" 640 400
+                    Model (Photo "" 1920 1200 "" 640 400) lastPos
     in
         ( initialModel, Cmd.none )
 
@@ -73,14 +79,23 @@ init flags =
 
 
 type Msg
-    = NoOp
+    = MouseMove MouseEvent
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        NoOp ->
-            ( model, Cmd.none )
+        MouseMove ev ->
+            ( { model | lastPos = ev }, Cmd.none )
+
+
+
+-- SUBSCRIPTIONS
+
+
+subscriptions : Model -> Sub Msg
+subscriptions model =
+    Sub.none
 
 
 
@@ -91,6 +106,6 @@ view : Model -> Html Msg
 view model =
     div [ class "photo-wrapper" ]
         [ div
-            [ class "photo" ]
+            [ class "photo", onMouseMove MouseMove ]
             []
         ]
