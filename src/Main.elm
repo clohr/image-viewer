@@ -34,8 +34,6 @@ type alias Model =
     , imgAlt : String
     , viewerWidth : Int
     , viewerHeight : Int
-    , zoomIncr : Int
-    , maxZoom : Int
     }
 
 
@@ -52,8 +50,6 @@ flagDecoder =
         |> optional "imgAlt" string ""
         |> optional "viewerWidth" int 640
         |> optional "viewerHeight" int 400
-        |> optional "zoomInc" int 10
-        |> optional "maxZoom" int 3
 
 
 init : Decode.Value -> ( Model, Cmd Msg )
@@ -68,7 +64,7 @@ init flags =
                     model
 
                 Err _ ->
-                    Model "" 1920 1200 "" 640 400 10 3
+                    Model "" 1920 1200 "" 640 400
     in
         ( initialModel, Cmd.none )
 
