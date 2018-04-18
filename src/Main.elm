@@ -15,7 +15,7 @@ main =
         { init = init
         , view = view
         , update = update
-        , subscriptions = subscriptions
+        , subscriptions = \_ -> Sub.none
         }
 
 
@@ -28,10 +28,6 @@ type alias Model =
     , lastPos : MouseEvent
     , zoom : Zoom
     }
-
-
-type alias Flags =
-    Photo
 
 
 type alias Photo =
@@ -64,6 +60,10 @@ init flags =
         lastPos =
             { clientPos = Position 0 0, targetPos = Position 0 0 }
 
+        initialPhoto : Photo
+        initialPhoto =
+            Photo "" 1920 1200 640 400
+
         initialModel : Model
         initialModel =
             case decodedValue of
@@ -71,7 +71,7 @@ init flags =
                     { photo = model, lastPos = lastPos, zoom = ZoomOut }
 
                 Err _ ->
-                    Model (Photo "" 1920 1200 640 400) lastPos ZoomOut
+                    Model initialPhoto lastPos ZoomOut
     in
         ( initialModel, Cmd.none )
 
@@ -211,12 +211,3 @@ update msg model =
 
         MouseOut evt ->
             ( { model | zoom = ZoomOut }, Cmd.none )
-
-
-
--- SUBSCRIPTIONS
-
-
-subscriptions : Model -> Sub Msg
-subscriptions model =
-    Sub.none
