@@ -1,6 +1,6 @@
 # Image Viewer
 
-Simple image viewer that supports pan and zoom on `:hover`.
+Simple image viewer that supports pan and zoom.
 
 ## Install
 `npm i && elm package install -y`
